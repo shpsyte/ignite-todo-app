@@ -2,23 +2,29 @@ import Logo from "./assets/logo.svg";
 import Clip from "./assets/clip.png";
 import { Check, PlusCircle, TrashSimple } from "phosphor-react";
 import * as Checkbox from "@radix-ui/react-checkbox";
-import { useState, useRef } from "react";
-interface TaskProps {
-  description: string;
-  done: boolean;
-}
+import { useState, useRef, useReducer } from "react";
+import {
+  INITIAL_STATE,
+  TaskProps,
+  taskReducer,
+} from "../src/Reducers/taskReducer";
 
 function App() {
+  const [state, dispatch] = useReducer(taskReducer, INITIAL_STATE);
+
   const [task, setTask] = useState<TaskProps[]>([] as TaskProps[]);
-  const [inputValue, setinputValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const addTask = (newtask: string) => {
+  console.log("state", state.loading);
+
+  const addTask = () => {
+    // dispatch({ type: "LOADING" });
+    var newtask = inputRef.current?.value || "";
     if (newtask !== "") {
       setTask((task) => {
         return [...task, { description: newtask, done: false }];
       });
-      setinputValue("");
+      inputRef.current!.value = "";
       inputRef.current?.focus();
     }
   };
@@ -51,8 +57,8 @@ function App() {
               ref={inputRef}
               type="text"
               placeholder="Adicionar Tarefa"
-              value={inputValue}
-              onChange={(e) => setinputValue(e.target.value)}
+              // value={inputValue}
+              // onChange={(e) => setinputValue(e.target.value)}
               className="w-full items-center p-4 gap-2 h-[54px] bg-gray-500 border-gray-700 border-solid border rounded-lg 
                     placeholder-gray-300 text-sm leading-[22px]
                     focus:outline-none focus:ring-2 focus:ring-brand-200 focus:border-transparent
@@ -64,7 +70,7 @@ function App() {
               text-gray-100 text-[14px] font-semibold leading-5
               hover:bg-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200 focus:border-transparent
               transition duration-300 ease-in-out"
-              onClick={() => addTask(inputValue)}
+              onClick={addTask}
             >
               Criar <PlusCircle size={16} />
             </button>
