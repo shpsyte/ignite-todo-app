@@ -1,7 +1,6 @@
 import Logo from "./assets/logo.svg";
 import Clip from "./assets/clip.png";
 import { Check, PlusCircle, TrashSimple } from "phosphor-react";
-import clsx from "clsx";
 import * as Checkbox from "@radix-ui/react-checkbox";
 import { useState, useRef } from "react";
 interface TaskProps {
@@ -105,6 +104,7 @@ function App() {
               {task.map((task, index) => {
                 return (
                   <div
+                    key={index + task.description}
                     className="w-full flex gap-4 justify-between bg-gray-500 min-h-[56px]
                               border-1 border-solid border-gray-400 rounded-lg py-4 px-4"
                   >
