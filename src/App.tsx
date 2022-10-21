@@ -2,18 +2,34 @@ import Logo from "./assets/logo.svg";
 import Clip from "./assets/clip.png";
 import { Check, PlusCircle, TrashSimple } from "phosphor-react";
 import * as Checkbox from "@radix-ui/react-checkbox";
-import { useState, useRef } from "react";
-
+import { useState, useRef, useEffect } from "react";
+import clsx from "clsx";
 interface TaskProps {
   done: boolean;
   description: string;
 }
+const STORAGE_KEY = "@todo:tasks";
 
 function App() {
-  const [task, setTask] = useState<TaskProps[]>([] as TaskProps[]);
+  const [task, setTask] = useState<TaskProps[]>(() => {
+    const tasks = localStorage.getItem(STORAGE_KEY);
+
+    if (tasks) {
+      return JSON.parse(tasks) as TaskProps[];
+    }
+
+    return [] as TaskProps[];
+  });
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const addTask = () => {
+  useEffect(() => {
+    const saveToLocalStorage = () => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(task));
+    };
+    saveToLocalStorage();
+  }, [task]);
+
+  const addTask = (e: any) => {
     var newtask = inputRef.current?.value || "";
     if (newtask !== "") {
       setTask((task) => {
@@ -31,12 +47,14 @@ function App() {
 
   const toggleTask = (index: number) => {
     setTask((task) => {
-      return task.map((task, i) => {
+      const tasks = task.map((task, i) => {
         if (i === index) {
           return { ...task, done: !task.done };
         }
         return task;
       });
+
+      return tasks;
     });
   };
 
@@ -65,7 +83,7 @@ function App() {
               text-gray-100 text-[14px] font-semibold leading-5
               hover:bg-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200 focus:border-transparent
               transition duration-300 ease-in-out"
-              onClick={addTask}
+              onClick={(e) => addTask(e)}
             >
               Criar <PlusCircle size={16} />
             </button>
@@ -103,16 +121,21 @@ function App() {
           ) : (
             <div className="w-full h-full flex flex-col gap-4">
               {task.map((task, index) => {
+                const addClass = clsx(
+                  "w-6 h-6 p=[2px] border-2 border-solid border-brand-100 rounded-full",
+                  {
+                    "animate-[spin_.3s_ease-out_1]": task.done,
+                  }
+                );
                 return (
                   <div
                     key={index + task.description}
-                    className="w-full flex gap-4 justify-between bg-gray-500 min-h-[56px]
-                              border-1 border-solid border-gray-400 rounded-lg py-4 px-4"
+                    className="w-full flex gap-4 justify-between bg-gray-500 min-h-[56px] border-1 border-solid border-gray-400 rounded-lg py-4 px-4"
                   >
                     <Checkbox.Root
                       checked={task.done}
                       onClick={(a) => toggleTask(index)}
-                      className="w-6 h-6 p=[2px] border-2 border-solid border-brand-100 rounded-full"
+                      className={addClass}
                     >
                       <Checkbox.Indicator asChild>
                         <Check className="h-5 w-5 text-cyan-500" size={24} />
