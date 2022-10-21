@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-gray-600;
+  box-sizing: border-box;
+  color: theme("colors.gray.100");
+}
