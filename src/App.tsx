@@ -2,23 +2,18 @@ import Logo from "./assets/logo.svg";
 import Clip from "./assets/clip.png";
 import { Check, PlusCircle, TrashSimple } from "phosphor-react";
 import * as Checkbox from "@radix-ui/react-checkbox";
-import { useState, useRef, useReducer } from "react";
-import {
-  INITIAL_STATE,
-  TaskProps,
-  taskReducer,
-} from "../src/Reducers/taskReducer";
+import { useState, useRef } from "react";
+
+interface TaskProps {
+  done: boolean;
+  description: string;
+}
 
 function App() {
-  const [state, dispatch] = useReducer(taskReducer, INITIAL_STATE);
-
   const [task, setTask] = useState<TaskProps[]>([] as TaskProps[]);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  console.log("state", state.loading);
-
   const addTask = () => {
-    // dispatch({ type: "LOADING" });
     var newtask = inputRef.current?.value || "";
     if (newtask !== "") {
       setTask((task) => {
